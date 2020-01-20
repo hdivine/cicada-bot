@@ -3,7 +3,6 @@ import threading
 import teleApi as tg
 import os
 import re
-
 import time
 
 # space for all clients and their corrosponding addrs
@@ -52,7 +51,6 @@ def send(client, msg):
 # main menu
 def options():
     while 1:
-        # os.system('clear')
         id, cmd = tg.trecv()
         if (cmd == 'List'):
             tg.tsend(id, "please wait...")
@@ -69,13 +67,11 @@ def show_list(id):
     cli = "~~~~~~~ clients ~~~~~~~\n"
     for i, con in enumerate(all_clients):
         try:
-            # con.send('ehlo'.encode())
+            # get handshake (check if client is active by sending hello message)
             send(con, 'hello')
             name = recv(con)
             cli += f"{i+1} - {name}_{all_addr[i][1]}\n"
-            # print(cli)
         except:
-            # think more ---
             del all_clients[i]
             del all_addr[i]
     tg.tsend(id, cli)
@@ -100,6 +96,7 @@ def connectTo(id, client):
 def main():
     bind_sock()
 
+    # continuesly look for clients
     conn = threading.Thread(target=accept_conn)
     conn.start()
 

