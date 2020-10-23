@@ -28,6 +28,7 @@ def tfreshStart():
 
 # clear current buffer message
 def clearBuffer(msg):
+    print('[+] Clearing buffer')
     serv('getupdates', "offset="+str(msg['result'][0]['update_id']+1))
 
 # recive message send to the bot
